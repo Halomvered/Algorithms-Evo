@@ -1,23 +1,15 @@
 var header = document.querySelector('header');
-var last_known_scroll_position = 0;
-var ticking = false;
+var nav = document.querySelector('nav');
 
-function doSomething(scroll_pos) {
-if( scroll_pos >= header.offsetHeight && document.querySelectorAll('nav')[0].className != 'sticky' ) {
-document.querySelectorAll('nav')[0].className += 'sticky'; }
+function stickyNav(scroll_pos) {
+scroll_pos = document.documentElement.scrollTop;
 
-if( scroll_pos < header.offsetHeight && document.querySelectorAll('nav')[0].className == 'sticky') { document.querySelectorAll('nav')[0].classList.remove('sticky');
+if(scroll_pos >= header.offsetHeight && nav.className != 'sticky') {
+nav.className += 'sticky'; }
+
+else if( scroll_pos < header.offsetHeight && nav.className == 'sticky'){ nav.classList.remove('sticky');
 };
-}
+};
 
 
-window.addEventListener('scroll', function(e) {
-  last_known_scroll_position = window.scrollY;
-  if (!ticking) {
-    window.requestAnimationFrame(function() {
-      doSomething(last_known_scroll_position);
-      ticking = false;
-    });
-  }
-  ticking = true;
-});
+window.addEventListener('scroll', stickyNav);
