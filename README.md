@@ -1,2 +1,2 @@
 # Algorithms-Evo
-Algorithms I want to improve over time.
+Basic algorithms I made and want to improve over time.
