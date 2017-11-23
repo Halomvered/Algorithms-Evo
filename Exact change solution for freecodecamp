@@ -95,7 +95,7 @@ function checkCashRegister(price, cash, cid) {
 			temp[1]? returnedChange.push(temp): '';
       
 			// Since current currency was depleted by this stage, move on to the next node of the linked-list
-			currentCurrency = currentCurrency.next
+			currentCurrency = currentCurrency.next;
 		}
 	// If after going through the entire list the there was not enough money to return to the customer
 	// notify that there are Insufficient Funds.
@@ -111,8 +111,8 @@ var register = new CashRegister();
 // Populate the nodes of the list.
 cid.forEach(function (currency) {
 	// Use addToHead method, so that each list will start with the higher value currency.
-	register.addToHead(currency)
+	register.addToHead(currency);
 });
 
-	return register.calcChange(change)
+	return register.calcChange(change);
 }
