@@ -1,0 +1,118 @@
+function checkCashRegister(price, cash, cid) {
+
+	// Calculate the sum of all cash in drawer
+	var cidTotal = cid.reduce(function (acc,item) {
+		return acc + item[1]
+	},0);
+
+	// Calculate the amount of change the customer needs to recieve
+	var change = cash - price;
+
+	// Check if the change equals the exact amount of case in drawer and if it is:
+	// Case closed.
+	if (change === cidTotal) return "Closed";
+
+	// Else, create a CashRegister linked-list Class with each available currency as a node.
+	function CashRegister() {
+		this.head = null;
+		this.tail = null;
+	}
+  
+	// Set  node creation with a value comprised out of the name and amount
+	// of each given currency, while also setting each currency with
+	// a decrementBy property matching how many dollars/cents each type of currency is worth.
+	function AvailableCurrency(value, next, prev) {
+		this.value = value;
+		this.next = next;
+		this.prev = prev;
+		switch (value[0]) {
+			case "ONE HUNDRED":
+					this.decrementBy = 100;
+				break;
+				case "TWENTY":
+					this.decrementBy = 20;
+				break;
+				case "TEN":
+					this.decrementBy = 10;
+				break;
+				case "FIVE":
+					this.decrementBy = 5;
+				break;
+				case "ONE":
+					this.decrementBy = 1;
+				break;
+				case "QUARTER":
+					this.decrementBy = 0.25;
+				break;
+				case "DIME":
+					this.decrementBy = 0.10;
+				break;
+				case "NICKEL":
+					this.decrementBy = 0.05;
+				break;
+				case "PENNY":
+					this.decrementBy = 0.01;
+				break;
+		}
+	}
+
+	// Add method to the CashRegister linked-list Class that populates it with the current
+	// cash in drawer.
+	CashRegister.prototype.addToHead = function (typeAmount) {
+		var newCurrency = new AvailableCurrency(typeAmount, this.head, null);
+		if(this.head) this.head.prev = newCurrency;
+		else this.tail = newCurrency;
+		this.head = newCurrency;
+	}
+
+	// Add method to the CashRegister linked-list Class that calculates the amount
+	// of change the costumer deserves, starting from the highest value currency
+	// and ending in the lowest value one.
+	CashRegister.prototype.calcChange = function (changeNeeded) {
+		var currentCurrency = this.head;
+		var returnedChange = [];
+
+		// While theres still change left undealt with, and we haven't gone through all the linked-list
+		while (changeNeeded >= 0  && currentCurrency) {
+    
+		// Create a temporary template of the current currency, with its amount set to 0
+		var temp = [currentCurrency.value[0], 0];
+    
+		// As long as the current currency is not bigger than the change we need to return to the customer
+		// and there's still more of it in the drawer -
+			while(currentCurrency.decrementBy <= changeNeeded && currentCurrency.value[1]){
+      
+				// Decrement the change by it, one by one.
+				changeNeeded = changeNeeded.toFixed(2) - currentCurrency.decrementBy;
+        
+				// Decrement the amount of it in the drawer one by one.
+				currentCurrency.value[1] = currentCurrency.value[1].toFixed(2) - currentCurrency.decrementBy;
+        
+				// Update the temporary template with the amount of each currency we returned to the customer.
+				temp[1] += currentCurrency.decrementBy;
+			}
+			// If temp is a coin we payed back to the customer, push it to the returnedChange array.
+			temp[1]? returnedChange.push(temp): '';
+      
+			// Since current currency was depleted by this stage, move on to the next node of the linked-list
+			currentCurrency = currentCurrency.next
+		}
+	// If after going through the entire list the there was not enough money to return to the customer
+	// notify that there are Insufficient Funds.
+	if(changeNeeded > 0) return "Insufficient Funds";
+  
+	// Else, return the array of change we created.
+	return returnedChange;
+	}
+
+// Create a linked-list by using the above class.
+var register = new CashRegister();
+
+// Populate the nodes of the list.
+cid.forEach(function (currency) {
+	// Use addToHead method, so that each list will start with the higher value currency.
+	register.addToHead(currency)
+});
+
+	return register.calcChange(change)
+}
